@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
+import Kakao from 'next-auth/providers/kakao';
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import type { User } from '@/app/lib/definitions';
@@ -16,7 +17,7 @@ async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers:{GET, POST} } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -33,10 +34,11 @@ export const { auth, signIn, signOut } = NextAuth({
  
           if (passwordsMatch) return user;
         }
-        
+
         console.log('Invalid credentials');
         return null;
       },
     }),
+    Kakao
   ],
 });
